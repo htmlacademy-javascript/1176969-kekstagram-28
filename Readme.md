@@ -1,7 +1,7 @@
 # Личный проект «Кекстаграм»
 
-* Студент: [Владимир](https://up.htmlacademy.ru/javascript/28/user/1176969).
-* Наставник: `Неизвестно`.
+* Студент: [Владимир Пипко](https://up.htmlacademy.ru/javascript/28/user/1176969).
+* Наставник: [Алексей Зольников](https://up.htmlacademy.ru/javascript/28/user/870391).
 
 ---
 
