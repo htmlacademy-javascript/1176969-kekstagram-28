@@ -115,7 +115,7 @@ const getComments = (array) => {
  * @returns {id:Number, url:String, description:String, comments:Object} - Пост
  */
 
-export const createMockData = (listSize) =>
+export const createData = (listSize) =>
   [...new Array(listSize).keys()].map((index) => {
     const id = index + 1;
     const url = `photos/${id}.jpg`;
