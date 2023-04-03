@@ -1,5 +1,4 @@
-<<<<<<< HEAD
-const MOCK_DATA_SIZE = 25;
+import { getNumber } from './utils.js';
 
 const Likes = {
   MIN: 15,
@@ -37,8 +36,42 @@ const descriptions = [
   'Cillum esse cillum ipsum nisi eiusmod ipsum eu officia sit sit. Sunt velit commodo in Lorem quis eiusmod. Nisi consequat proident cillum duis veniam nisi et minim laboris. Cillum reprehenderit sit elit enim proident cillum. Occaecat ex ipsum nulla ad excepteur exercitation fugiat eu consectetur. Consequat nostrud consectetur amet amet mollit non culpa deserunt velit velit. Nulla magna ad nulla irure excepteur sunt.\r\n',
 ];
 
-const getNumber = (max, min) =>
-  Math.round(Math.random() * (max - Comments.MIN) + min);
+const names = [
+  'Mendez Rutledge',
+  'Leona Lang',
+  'Sherri Lewis',
+  'Kendra Charles',
+  'Letha Kaufman',
+  'Katina Hewitt',
+  'Wong Russell',
+  'Hammond Saunders',
+  'Faulkner Giles',
+  'Irene Osborne',
+  'Luella Pace',
+  'Christian Mcintosh',
+  'Sylvia Ross',
+  'Taylor Strickland',
+  'Atkinson Vang',
+  'Goff Dixon',
+  'Bowen Brewer',
+  'Dionne Atkins',
+  'Hogan Hayes',
+  'Willa Valencia',
+  'Isabel Pope',
+  'Carol Ward',
+  'Sophia Berg',
+  'Savage Cannon',
+  'Osborne Fox',
+  'Gracie Delacruz',
+  'Lori Humphrey',
+];
+
+const messages = `Всё отлично!
+В целом всё неплохо. Но не всё.
+Когда вы делаете фотографию, хорошо бы убирать палец из кадра. В конце концов это просто непрофессионально.
+Моя бабушка случайно чихнула с фотоаппаратом в руках и у неё получилась фотография лучше.
+Я поскользнулся на банановой кожуре и уронил фотоаппарат на кота и у меня получилась фотография лучше.
+Лица у людей на фотке перекошены, как будто их избивают. Как можно было поймать такой неудачный момент?!`.split('\n');
 
 const getComments = (array) => {
   if (array.length === 0) {
@@ -46,47 +79,11 @@ const getComments = (array) => {
   }
 
   const getName = () => {
-    const names = [
-      'Mendez Rutledge',
-      'Leona Lang',
-      'Sherri Lewis',
-      'Kendra Charles',
-      'Letha Kaufman',
-      'Katina Hewitt',
-      'Wong Russell',
-      'Hammond Saunders',
-      'Faulkner Giles',
-      'Irene Osborne',
-      'Luella Pace',
-      'Christian Mcintosh',
-      'Sylvia Ross',
-      'Taylor Strickland',
-      'Atkinson Vang',
-      'Goff Dixon',
-      'Bowen Brewer',
-      'Dionne Atkins',
-      'Hogan Hayes',
-      'Willa Valencia',
-      'Isabel Pope',
-      'Carol Ward',
-      'Sophia Berg',
-      'Savage Cannon',
-      'Osborne Fox',
-      'Gracie Delacruz',
-      'Lori Humphrey',
-    ];
     const nameIndex = getNumber(names.length, 1);
     return names[nameIndex];
   };
 
   const getMessage = (message = '') => {
-    const messages = `Всё отлично!
-    В целом всё неплохо. Но не всё.
-    Когда вы делаете фотографию, хорошо бы убирать палец из кадра. В конце концов это просто непрофессионально.
-    Моя бабушка случайно чихнула с фотоаппаратом в руках и у неё получилась фотография лучше.
-    Я поскользнулся на банановой кожуре и уронил фотоаппарат на кота и у меня получилась фотография лучше.
-    Лица у людей на фотке перекошены, как будто их избивают. Как можно было поймать такой неудачный момент?!`.split('\n');
-
     const messageSize = Math.random() >= 0.5 ? 1 : 2;
 
     for (let i = 0; i < messageSize; i++) {
@@ -111,7 +108,14 @@ const getComments = (array) => {
   }, {});
 };
 
-const createMockData = (listSize) =>
+/**
+ * Генерирует список постов
+ *
+ * @param {listSize} listSize - Размер списка постов
+ * @returns {id:Number, url:String, description:String, comments:Object} - Пост
+ */
+
+export const createMockData = (listSize) =>
   [...new Array(listSize).keys()].map((index) => {
     const id = index + 1;
     const url = `photos/${id}.jpg`;
@@ -121,10 +125,3 @@ const createMockData = (listSize) =>
     const comments = getComments(new Array(commentsAmount).fill());
     return { id, url, description, likes, comments };
   });
-=======
-import { MOCK_DATA_SIZE } from './const.js';
-import { createMockData } from './data.js';
->>>>>>> module5-task1
-
-const data = createMockData(MOCK_DATA_SIZE);
-console.log(data);
