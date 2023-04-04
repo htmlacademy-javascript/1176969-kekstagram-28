@@ -34,6 +34,7 @@ export const handlePictureClick = ({target}) => {
     popupElement.querySelector('.comments-loader').classList.add('hidden');
 
     popupElement.classList.remove('hidden');
+    document.body.classList.add('modal-open');
   }
 };
 
