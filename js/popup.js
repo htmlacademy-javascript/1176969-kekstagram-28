@@ -1,8 +1,5 @@
 import { pictures } from './pictures.js';
 
-
-const popupElement = document.querySelector('.big-picture');
-
 const commentTeplate = ({id, avatar, name, message}) => (`<li class="social__comment" data-comment-id="${id}">
   <img
     class="social__picture"
@@ -12,10 +9,27 @@ const commentTeplate = ({id, avatar, name, message}) => (`<li class="social__com
   <p class="social__text">${message}</p>
 </li>`);
 
+const handleClosePopupClick = ({target}) => {
+  target.closest('.big-picture')?.classList.add('hidden');
+  target.removeEventListener('click', handleClosePopupClick);
+  document.removeEventListener('keydown', handleClosePopupKeydown);
+  document.body.classList.remove('modal-open');
+};
+
+const handleClosePopupKeydown = ({key}) => {
+  if (key === 'Escape') {
+    document.querySelector('.big-picture').classList.add('hidden');
+    document.removeEventListener('keydown', handleClosePopupKeydown);
+    document.removeEventListener('click', handleClosePopupClick);
+    document.body.classList.remove('modal-open');
+  }
+};
+
 export const handlePictureClick = ({target}) => {
   if (target?.closest('.picture')) {
     const picture = pictures.find((item) => item.id === Number(target.closest('.picture').dataset.pictureId));
 
+    const popupElement = document.querySelector('.big-picture');
     popupElement.querySelector('.big-picture__img > img').src = picture.url;
     popupElement.querySelector('.likes-count').textContent = picture.likes;
     popupElement.querySelector('.comments-count').textContent = picture.comments.length;
@@ -35,6 +49,9 @@ export const handlePictureClick = ({target}) => {
 
     popupElement.classList.remove('hidden');
     document.body.classList.add('modal-open');
+
+    popupElement.querySelector('.big-picture__cancel').addEventListener('click', handleClosePopupClick);
+    document.addEventListener('keydown', handleClosePopupKeydown);
   }
 };
 
