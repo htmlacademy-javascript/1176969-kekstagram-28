@@ -7,7 +7,7 @@ const Likes = {
 
 const Comments = {
   MIN: 0,
-  MAX: 5,
+  MAX: 25,
 };
 
 const descriptions = [
