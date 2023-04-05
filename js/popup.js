@@ -1,3 +1,4 @@
+import { MAX_COMMENTS } from './const.js';
 import { pictures } from './pictures.js';
 
 const commentTeplate = ({id, avatar, name, message}) => (`<li class="social__comment" data-comment-id="${id}">
@@ -24,11 +25,40 @@ const clearComments = (popupElement) => {
   }
 };
 
+const updateCommentsCount = (count) => {
+  const countElement = document.querySelector('.comments-count__open');
+  countElement.textContent = count;
+};
+
 const renderComments = (popupElement, {comments}) => {
   const commentContainerElement = popupElement.querySelector('.social__comments');
-  for (const comment of comments) {
-    commentContainerElement.insertAdjacentHTML('beforeend', commentTeplate(comment));
+  const loadMoreButton = popupElement.querySelector('.comments-loader').cloneNode(true);
+  popupElement.querySelector('.comments-loader').replaceWith(loadMoreButton);
+
+  let index = 0;
+  for (let i = index; i < MAX_COMMENTS && i < comments.length; i++) {
+    commentContainerElement.insertAdjacentHTML('beforeend', commentTeplate(comments[i]));
+    index += 1;
   }
+  updateCommentsCount(index);
+
+  if (MAX_COMMENTS >= comments.length) {
+    loadMoreButton.classList.add('hidden');
+    return;
+  }
+
+  loadMoreButton.classList.remove('hidden');
+  loadMoreButton.addEventListener('click', () => {
+    for (let i = index; i < index + MAX_COMMENTS && i < comments.length; i++) {
+      commentContainerElement.insertAdjacentHTML('beforeend', commentTeplate(comments[i]));
+    }
+    index += index + MAX_COMMENTS >= comments.length ? comments.length - index : MAX_COMMENTS;
+    updateCommentsCount(index);
+
+    if (index >= comments.length) {
+      loadMoreButton.classList.add('hidden');
+    }
+  });
 };
 
 const openPopup = (popupElement) => {
@@ -63,10 +93,6 @@ export const handlePictureClick = ({target}) => {
     updatePopup(popupElement, picture);
     clearComments(popupElement);
     renderComments(popupElement, picture);
-
-    // popupElement.querySelector('.social__comment-count').classList.add('hidden');
-    // popupElement.querySelector('.comments-loader').classList.add('hidden');
-
     openPopup(popupElement);
 
     popupElement.querySelector('.big-picture__cancel').addEventListener('click', handleClosePopupClick);
