@@ -1,8 +1,9 @@
 
 import { createData } from './data.js';
+import { handlePictureClick } from './popup.js';
 
 const DATA_SIZE = 25;
-const pictures = createData(DATA_SIZE);
+export const pictures = createData(DATA_SIZE);
 
 const pictureTemplate = document.querySelector('#picture').content.querySelector('.picture');
 const picturesFragment = new DocumentFragment();
@@ -13,6 +14,7 @@ for (const {id, url, likes, comments} of pictures) {
   const pictureLikesElement = pictureElement.querySelector('.picture__likes');
   const pictureCommentsElement = pictureElement.querySelector('.picture__comments');
 
+  pictureElement.dataset.pictureId = id;
   pictureElement.href = `#${id}`;
   pictureImgElement.src = url;
   pictureLikesElement.textContent = likes;
@@ -23,3 +25,4 @@ for (const {id, url, likes, comments} of pictures) {
 
 const picturesElement = document.querySelector('.pictures');
 picturesElement.appendChild(picturesFragment);
+picturesElement.addEventListener('click', handlePictureClick);
