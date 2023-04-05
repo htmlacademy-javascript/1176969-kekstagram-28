@@ -45,8 +45,8 @@ export const handlePictureClick = ({target}) => {
       commentContainerElement.insertAdjacentHTML('beforeend', commentTeplate(comment));
     }
 
-    popupElement.querySelector('.social__comment-count').classList.add('hidden');
-    popupElement.querySelector('.comments-loader').classList.add('hidden');
+    // popupElement.querySelector('.social__comment-count').classList.add('hidden');
+    // popupElement.querySelector('.comments-loader').classList.add('hidden');
 
     popupElement.classList.remove('hidden');
     document.body.classList.add('modal-open');
