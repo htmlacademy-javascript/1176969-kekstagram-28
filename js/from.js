@@ -49,7 +49,6 @@ const createSliderElement = (sliderElement) => {
   });
 };
 
-
 const changeEffect = (sliderElement, min, max, step, effect) => {
   sliderElement.noUiSlider.updateOptions({
     range: {min, max},
@@ -58,6 +57,26 @@ const changeEffect = (sliderElement, min, max, step, effect) => {
   effectState[effect] = effectState[effect] ?? max;
   sliderElement.noUiSlider.set(effectState[effect]);
 };
+
+const closePopup = () => {
+  const uploadPopupElement = document.querySelector('.img-upload__overlay');
+  uploadPopupElement.classList.add('hidden');
+  document.removeEventListener('keydown', handleClosePopupKeydown);
+  uploadPopupElement.querySelector('#upload-cancel').removeEventListener('click', handleClosePopupClick);
+  document.body.classList.remove('modal-open');
+  const sliderElement = document.querySelector('.effect-level__slider');
+  sliderElement.noUiSlider.destroy();
+};
+
+function handleClosePopupClick () {
+  closePopup();
+}
+
+function handleClosePopupKeydown ({key}) {
+  if (key === 'Escape') {
+    closePopup();
+  }
+}
 
 function handleScaleClick ({target}) {
   const scaleValueElement = target.closest('.scale').querySelector('.scale__control--value');
@@ -116,6 +135,11 @@ function handleUploadFileChange () {
 
   const effectsElement = document.querySelector('.effects__list');
   effectsElement.addEventListener('change', (evt) => handleImgEffectChange(evt, sliderElement));
+
+  uploadPopupElement.querySelector('#upload-cancel').addEventListener('click', handleClosePopupClick);
+  document.addEventListener('keydown', handleClosePopupKeydown);
 }
 
 document.querySelector('#upload-file').addEventListener('change', handleUploadFileChange);
+
+handleUploadFileChange();
