@@ -1408,3 +1408,7 @@ main {
 .hidden {
   display: none;
 }
+
+#upload-select-image .img-upload__preview {
+  overflow: hidden;
+}
