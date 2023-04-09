@@ -1,6 +1,6 @@
-const defaultScale = 10;
-const maxScale = 15;
-const minScale = 5;
+const defaultScale = 100;
+const maxScale = 100;
+const minScale = 25;
 let scaleValue = defaultScale;
 
 const effectSchema = {
@@ -18,6 +18,15 @@ const openPopup = (uploadPopupElement) => {
   document.body.classList.add('modal-open');
 };
 
+const updateEffectLevelValue = (effect) => {
+  const levelInputElement = document.querySelector('.effect-level__value');
+  if (levelInputElement) {
+    levelInputElement.value = effectState[effect];
+  }
+
+};
+
+
 const createSliderElement = (sliderElement) => {
   noUiSlider.create(sliderElement, {
     range: {
@@ -25,14 +34,25 @@ const createSliderElement = (sliderElement) => {
       max: 100,
     },
     start: 100,
-    step: 1,
+    step: 10,
     connect: 'lower',
+    format: {
+      to: function (value) {
+        return parseFloat(value);
+      },
+      from: function (value) {
+        return value;
+      },
+    },
   });
   sliderElement.setAttribute('disabled', true);
   sliderElement.noUiSlider.on('update', () => {
     const effect = document.querySelector('.effects__item .effects__radio:checked')?.id?.split('-')?.[1] ?? '';
     const imgPreviewElement = document.querySelector('.img-upload__wrapper .img-upload__preview img');
     switch (effect) {
+      case 'marvin':
+        imgPreviewElement.style.filter = `${effectSchema[effect]}(${sliderElement.noUiSlider.get()}%)`;
+        break;
       case 'phobos':
         imgPreviewElement.style.filter = `${effectSchema[effect]}(${sliderElement.noUiSlider.get() / 100}px)`;
         break;
@@ -46,6 +66,7 @@ const createSliderElement = (sliderElement) => {
   sliderElement.noUiSlider.on('change', () => {
     const effect = document.querySelector('.effects__item .effects__radio:checked').id.split('-')?.[1] ?? '';
     effectState[effect] = sliderElement.noUiSlider.get();
+    updateEffectLevelValue(effect);
   });
 };
 
@@ -56,6 +77,7 @@ const changeEffect = (sliderElement, min, max, step, effect) => {
   });
   effectState[effect] = effectState[effect] ?? max;
   sliderElement.noUiSlider.set(effectState[effect]);
+  updateEffectLevelValue(effect);
 };
 
 const closePopup = () => {
@@ -111,44 +133,57 @@ function handleClosePopupKeydown ({key}) {
 
 function handleScaleClick ({target}) {
   const scaleValueElement = target.closest('.scale').querySelector('.scale__control--value');
-  const decrementScaleElement = target.closest('.scale__control--smaller');
   const incrementScaleElement = target.closest('.scale__control--bigger');
+  const decrementScaleElement = target.closest('.scale__control--smaller');
   const imgPreviewElement = target.closest('.img-upload__preview-container').querySelector('.img-upload__preview img');
 
   if (incrementScaleElement && scaleValue < maxScale) {
-    scaleValue += 0.5;
+    scaleValue += minScale;
   }
 
   if (decrementScaleElement && scaleValue > minScale) {
-    scaleValue -= 0.5;
+    scaleValue -= minScale;
   }
 
-  scaleValueElement.value = `${(scaleValue - minScale) * 10}%`;
-  imgPreviewElement.style.transform = `scale(${scaleValue / 10})`;
+  scaleValueElement.value = `${(scaleValue)}%`;
+  imgPreviewElement.style.transform = `scale(${scaleValue / 100})`;
 }
 
 function handleImgEffectChange ({target}, sliderElement) {
   const imgPreviewElement = target.closest('.img-upload__wrapper').querySelector('.img-upload__preview img');
   const effect = target.id.split('-')?.[1] ?? '';
+
+  if (imgPreviewElement.className !== '') {
+    imgPreviewElement.classList.replace(imgPreviewElement.className, `effects__preview--${effect}`);
+  } else if (imgPreviewElement.className === '') {
+    imgPreviewElement.classList.add(`effects__preview--${effect}`);
+  }
+
   switch (effect) {
     case 'none':
       sliderElement.setAttribute('disabled', true);
-      changeEffect(sliderElement, 0, 100, 1);
+      changeEffect(sliderElement, 0, 100, 10);
       imgPreviewElement.style.filter = 'none';
+      imgPreviewElement.className = '';
+      break;
+    case 'marvin':
+      sliderElement.removeAttribute('disabled');
+      changeEffect(sliderElement, 0, 100, 1, effect);
+      imgPreviewElement.style.filter = `${effectSchema[effect]}(${effectState[effect]}%)`;
       break;
     case 'phobos':
       sliderElement.removeAttribute('disabled');
-      changeEffect(sliderElement, 0, 300, 3, effect);
+      changeEffect(sliderElement, 0, 300, 10, effect);
       imgPreviewElement.style.filter = `${effectSchema[effect]}(${effectState[effect] / 100}px)`;
       break;
     case 'heat':
       sliderElement.removeAttribute('disabled');
-      changeEffect(sliderElement, 100, 300, 2, effect);
+      changeEffect(sliderElement, 100, 300, 10, effect);
       imgPreviewElement.style.filter = `${effectSchema[effect]}(${effectState[effect] / 100})`;
       break;
     default:
       sliderElement.removeAttribute('disabled');
-      changeEffect(sliderElement, 0, 100, 1, effect);
+      changeEffect(sliderElement, 0, 100, 10, effect);
       imgPreviewElement.style.filter = `${effectSchema[effect]}(${effectState[effect] / 100})`;
   }
 }
@@ -209,7 +244,7 @@ export function handleUploadFileChange () {
   openPopup(uploadPopupElement);
 
   const scaleValueElement = document.querySelector('.scale__control--value');
-  scaleValueElement.value = `${(scaleValue - minScale) * 10}%`;
+  scaleValueElement.value = `${(scaleValue)}%`;
   uploadPopupElement.querySelector('.scale').addEventListener('click', handleScaleClick);
 
   const sliderElement = document.querySelector('.effect-level__slider');
@@ -231,3 +266,4 @@ export function handleUploadFileChange () {
 }
 
 document.querySelector('#upload-file').addEventListener('change', handleUploadFileChange);
+handleUploadFileChange();
