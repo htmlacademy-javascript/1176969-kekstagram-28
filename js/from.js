@@ -1,3 +1,6 @@
+import { sendData } from './api.js';
+import { errorFormDataElement, loadingElement } from './alerts.js';
+
 const defaultScale = 100;
 const maxScale = 100;
 const minScale = 25;
@@ -23,9 +26,7 @@ const updateEffectLevelValue = (effect) => {
   if (levelInputElement) {
     levelInputElement.value = effectState[effect];
   }
-
 };
-
 
 const createSliderElement = (sliderElement) => {
   noUiSlider.create(sliderElement, {
@@ -80,14 +81,41 @@ const changeEffect = (sliderElement, min, max, step, effect) => {
   updateEffectLevelValue(effect);
 };
 
+const clearEffectState = () => {
+  for (const effect in effectState) {
+    delete effectState[effect];
+  }
+};
+
+const resetUploadForm = () => {
+  const formElement = document.querySelector('#upload-select-image');
+  formElement.reset();
+};
+
+const resetImgElement = () => {
+  const imgElement = document.querySelector('.img-upload__preview img');
+  imgElement.className = '';
+  imgElement.style.filter = 'none';
+  imgElement.style.transform = 'none';
+};
+
+const resetForm = () => {
+  const sliderElement = document.querySelector('.effect-level__slider');
+  sliderElement.noUiSlider.destroy();
+
+  scaleValue = defaultScale;
+  resetImgElement();
+  clearEffectState();
+  resetUploadForm();
+};
+
 const closePopup = () => {
   const uploadPopupElement = document.querySelector('.img-upload__overlay');
   uploadPopupElement.classList.add('hidden');
   document.removeEventListener('keydown', handleClosePopupKeydown);
   uploadPopupElement.querySelector('#upload-cancel').removeEventListener('click', handleClosePopupClick);
   document.body.classList.remove('modal-open');
-  const sliderElement = document.querySelector('.effect-level__slider');
-  sliderElement.noUiSlider.destroy();
+  resetForm();
 };
 
 const formErrorMessage = {};
@@ -234,8 +262,15 @@ function handleDescriptionValidate (value) {
 }
 
 function handleFormSubmit (evt, validate) {
-  if (!validate()) {
-    evt.preventDefault();
+  evt.preventDefault();
+  if (validate()) {
+    loadingElement.render();
+    sendData(errorFormDataElement, new FormData(evt.target))
+      .then((response) => {
+        if (response) {
+          closePopup();
+        }
+      });
   }
 }
 
@@ -266,4 +301,3 @@ export function handleUploadFileChange () {
 }
 
 document.querySelector('#upload-file').addEventListener('change', handleUploadFileChange);
-handleUploadFileChange();

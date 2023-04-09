@@ -1,5 +1,4 @@
 import { MAX_COMMENTS } from './const.js';
-import { pictures } from './pictures.js';
 
 const commentTeplate = ({id, avatar, name, message}) => (`<li class="social__comment" data-comment-id="${id}">
   <img
@@ -85,7 +84,7 @@ function handleClosePopupKeydown ({key}) {
   }
 }
 
-export const handlePictureClick = ({target}) => {
+export const handlePictureClick = ({target}, pictures) => {
   if (target?.closest('.picture')) {
     const picture = pictures.find((item) => item.id === Number(target.closest('.picture').dataset.pictureId));
     const popupElement = document.querySelector('.big-picture');
