@@ -1,6 +1,6 @@
-const defaultScale = 10;
-const maxScale = 15;
-const minScale = 5;
+const defaultScale = 100;
+const maxScale = 100;
+const minScale = 25;
 let scaleValue = defaultScale;
 
 const effectSchema = {
@@ -111,20 +111,20 @@ function handleClosePopupKeydown ({key}) {
 
 function handleScaleClick ({target}) {
   const scaleValueElement = target.closest('.scale').querySelector('.scale__control--value');
-  const decrementScaleElement = target.closest('.scale__control--smaller');
   const incrementScaleElement = target.closest('.scale__control--bigger');
+  const decrementScaleElement = target.closest('.scale__control--smaller');
   const imgPreviewElement = target.closest('.img-upload__preview-container').querySelector('.img-upload__preview img');
 
   if (incrementScaleElement && scaleValue < maxScale) {
-    scaleValue += 0.5;
+    scaleValue += minScale;
   }
 
   if (decrementScaleElement && scaleValue > minScale) {
-    scaleValue -= 0.5;
+    scaleValue -= minScale;
   }
 
-  scaleValueElement.value = `${(scaleValue - minScale) * 10}%`;
-  imgPreviewElement.style.transform = `scale(${scaleValue / 10})`;
+  scaleValueElement.value = `${(scaleValue)}%`;
+  imgPreviewElement.style.transform = `scale(${scaleValue / 100})`;
 }
 
 function handleImgEffectChange ({target}, sliderElement) {
@@ -209,7 +209,7 @@ export function handleUploadFileChange () {
   openPopup(uploadPopupElement);
 
   const scaleValueElement = document.querySelector('.scale__control--value');
-  scaleValueElement.value = `${(scaleValue - minScale) * 10}%`;
+  scaleValueElement.value = `${(scaleValue)}%`;
   uploadPopupElement.querySelector('.scale').addEventListener('click', handleScaleClick);
 
   const sliderElement = document.querySelector('.effect-level__slider');
@@ -231,3 +231,4 @@ export function handleUploadFileChange () {
 }
 
 document.querySelector('#upload-file').addEventListener('change', handleUploadFileChange);
+handleUploadFileChange();
