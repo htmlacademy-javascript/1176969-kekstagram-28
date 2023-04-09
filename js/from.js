@@ -198,6 +198,11 @@ function handleDescriptionValidate (value) {
   return value.length <= 140;
 }
 
+function handleFormSubmit (evt, validate) {
+  if (!validate()) {
+    evt.preventDefault();
+  }
+}
 
 export function handleUploadFileChange () {
   const uploadPopupElement = document.querySelector('.img-upload__overlay');
@@ -218,6 +223,8 @@ export function handleUploadFileChange () {
 
   orderForm.querySelector('.text__hashtags').addEventListener('change', pristine.validate);
   orderForm.querySelector('.text__description').addEventListener('change', pristine.validate);
+
+  orderForm.addEventListener('submit', (evt) => handleFormSubmit(evt, pristine.validate));
 
   uploadPopupElement.querySelector('#upload-cancel').addEventListener('click', handleClosePopupClick);
   document.addEventListener('keydown', handleClosePopupKeydown);
