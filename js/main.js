@@ -4,8 +4,8 @@ import './functions.js';
 import './from.js';
 import { getData } from './api.js';
 import { renderPictures } from './pictures.js';
-import { showDataErrorMessage } from './errors.js';
+import { errorLoadDataElement } from './alerts.js';
 
 
-getData(showDataErrorMessage)
+getData(errorLoadDataElement)
   .then((pictures) => renderPictures(pictures));
