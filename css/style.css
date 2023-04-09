@@ -1412,3 +1412,25 @@ main {
 #upload-select-image .img-upload__preview {
   overflow: hidden;
 }
+
+span.pristine-error.form__error {
+  color:#ffe753;
+  display:block;
+  font-family:"Open Sans", Arial, sans-serif;
+  font-size:12px;
+  margin-bottom:5px;
+  padding-left:5px;
+  text-align:left;
+  text-transform:initial;
+  width:450px;
+}
+
+.img-upload__field-wrapper--invalid {
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:center;
+}
+
+.img-upload__field-wrapper--invalid input,.img-upload__field-wrapper--invalid textarea {
+  margin-bottom:0;
+}
