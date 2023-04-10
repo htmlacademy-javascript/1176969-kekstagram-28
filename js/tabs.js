@@ -1,4 +1,5 @@
 import { renderPictures } from './pictures.js';
+import { debounce } from './utils.js';
 
 const filterShema = {
   'По умолчанию': 'default',
@@ -33,23 +34,26 @@ const getFilterPictures = (filter, pictures) => {
   }
 };
 
+function handleTabsClick ({target}, pictures) {
+  const tabsMenuElement = target.closest('.img-filters');
+  const tabButtonElement = target.closest('.img-filters__button:not(.img-filters__button--active)');
+
+  if (!tabButtonElement) {
+    return;
+  }
+
+  const filter = filterShema[tabButtonElement.textContent];
+  const filterPictures = getFilterPictures(filter, pictures);
+  updateActiveTabClass(tabsMenuElement, tabButtonElement);
+  removePictures();
+  renderPictures(filterPictures);
+}
+
 export const initTabs = (pictures) => {
   const tabsMenuElement = document.querySelector('.img-filters');
   tabsMenuElement.classList.remove('img-filters--inactive');
 
   renderPictures(pictures);
 
-  tabsMenuElement.addEventListener('click', ({target}) => {
-    const tabButtonElement = target.closest('.img-filters__button:not(.img-filters__button--active)');
-
-    if (!tabButtonElement) {
-      return;
-    }
-
-    const filter = filterShema[tabButtonElement.textContent];
-    const filterPictures = getFilterPictures(filter, pictures);
-    updateActiveTabClass(tabsMenuElement, tabButtonElement);
-    removePictures();
-    renderPictures(filterPictures);
-  });
+  tabsMenuElement.addEventListener('click', debounce((evt) => handleTabsClick(evt, pictures)));
 };
