@@ -14,6 +14,12 @@ const effectSchema = {
   'heat': 'brightness',
 };
 
+const fileTypes = [
+  'image/bmp',
+  'image/jpeg',
+  'image/png',
+];
+
 const effectState = {};
 
 const openPopup = (uploadPopupElement) => {
@@ -148,6 +154,8 @@ const createValidator = (orderForm) => {
   return pristine;
 };
 
+const validImgType = (file) => fileTypes.includes(file?.type);
+
 function handleClosePopupClick () {
   closePopup();
 }
@@ -274,7 +282,17 @@ function handleFormSubmit (evt, validate) {
   }
 }
 
-export function handleUploadFileChange () {
+export function handleUploadFileChange ({target}) {
+  const file = target.files?.[0];
+
+  if (!validImgType(file)) {
+    resetUploadForm();
+    return;
+  }
+
+  const uploadImgElement = document.querySelector('.img-upload__overlay img');
+  uploadImgElement.src = URL.createObjectURL(file);
+
   const uploadPopupElement = document.querySelector('.img-upload__overlay');
   openPopup(uploadPopupElement);
 
