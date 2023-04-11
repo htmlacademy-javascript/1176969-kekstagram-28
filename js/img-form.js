@@ -1,10 +1,13 @@
 import { sendData } from './api.js';
 import { errorFormDataElement, loadingElement } from './alerts.js';
 
-const defaultScale = 100;
-const maxScale = 100;
-const minScale = 25;
-let scaleValue = defaultScale;
+const MAX_HASHTAG_LENGTH = 20;
+const MAX_HASHTAGS_COUNT = 5;
+const MAX_DESCRIPTION_LENGTH = 140;
+const MAX_SCALE = 100;
+const MIN_SCALE = 25;
+const DEFAULT_SCALE = 100;
+let scaleValue = DEFAULT_SCALE;
 
 const effectSchema = {
   'chrome': 'grayscale',
@@ -13,6 +16,12 @@ const effectSchema = {
   'phobos': 'blur',
   'heat': 'brightness',
 };
+
+const fileTypes = [
+  'image/bmp',
+  'image/jpeg',
+  'image/png',
+];
 
 const effectState = {};
 
@@ -103,7 +112,7 @@ const resetForm = () => {
   const sliderElement = document.querySelector('.effect-level__slider');
   sliderElement.noUiSlider.destroy();
 
-  scaleValue = defaultScale;
+  scaleValue = DEFAULT_SCALE;
   resetImgElement();
   clearEffectState();
   resetUploadForm();
@@ -148,13 +157,18 @@ const createValidator = (orderForm) => {
   return pristine;
 };
 
+const validImgType = (file) => fileTypes.includes(file?.type);
+
 function handleClosePopupClick () {
   closePopup();
 }
 
 function handleClosePopupKeydown ({key}) {
   const activeElementAttribute = document.activeElement?.getAttribute('name');
-  if (key === 'Escape' && activeElementAttribute !== 'hashtags' && activeElementAttribute !== 'description') {
+  if (key === 'Escape'
+      && activeElementAttribute !== 'hashtags'
+      && activeElementAttribute !== 'description'
+      && !document.querySelector('.error')) {
     closePopup();
   }
 }
@@ -165,12 +179,12 @@ function handleScaleClick ({target}) {
   const decrementScaleElement = target.closest('.scale__control--smaller');
   const imgPreviewElement = target.closest('.img-upload__preview-container').querySelector('.img-upload__preview img');
 
-  if (incrementScaleElement && scaleValue < maxScale) {
-    scaleValue += minScale;
+  if (incrementScaleElement && scaleValue < MAX_SCALE) {
+    scaleValue += MIN_SCALE;
   }
 
-  if (decrementScaleElement && scaleValue > minScale) {
-    scaleValue -= minScale;
+  if (decrementScaleElement && scaleValue > MIN_SCALE) {
+    scaleValue -= MIN_SCALE;
   }
 
   scaleValueElement.value = `${(scaleValue)}%`;
@@ -243,13 +257,13 @@ function handleHashtagValidate (value) {
       return false;
     }
 
-    if (hashtag.length > 20) {
+    if (hashtag.length > MAX_HASHTAG_LENGTH) {
       setHastagsErrorMessage('Максимальная длина хэш-тега 20 символов');
       return false;
     }
   }
 
-  if (hashtags.length > 5) {
+  if (hashtags.length > MAX_HASHTAGS_COUNT) {
     setHastagsErrorMessage('Не больше 5 хеш-тегов');
     return false;
   }
@@ -258,7 +272,7 @@ function handleHashtagValidate (value) {
 }
 
 function handleDescriptionValidate (value) {
-  return value.length <= 140;
+  return value.length <= MAX_DESCRIPTION_LENGTH;
 }
 
 function handleFormSubmit (evt, validate) {
@@ -274,7 +288,17 @@ function handleFormSubmit (evt, validate) {
   }
 }
 
-export function handleUploadFileChange () {
+export function handleUploadFileChange ({target}) {
+  const file = target.files?.[0];
+
+  if (!validImgType(file)) {
+    resetUploadForm();
+    return;
+  }
+
+  const uploadImgElement = document.querySelector('.img-upload__overlay img');
+  uploadImgElement.src = URL.createObjectURL(file);
+
   const uploadPopupElement = document.querySelector('.img-upload__overlay');
   openPopup(uploadPopupElement);
 
@@ -297,7 +321,5 @@ export function handleUploadFileChange () {
   orderForm.addEventListener('submit', (evt) => handleFormSubmit(evt, pristine.validate));
 
   uploadPopupElement.querySelector('#upload-cancel').addEventListener('click', handleClosePopupClick);
-  document.addEventListener('keydown', handleClosePopupKeydown);
+  document.body.addEventListener('keydown', handleClosePopupKeydown);
 }
-
-document.querySelector('#upload-file').addEventListener('change', handleUploadFileChange);

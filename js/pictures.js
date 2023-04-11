@@ -1,5 +1,5 @@
 
-import { handlePictureClick } from './popup.js';
+import { handlePictureClick } from './img-popup.js';
 
 export const renderPictures = (pictures) => {
   const pictureTemplate = document.querySelector('#picture').content.querySelector('.picture');

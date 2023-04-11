@@ -95,7 +95,7 @@ export const handlePictureClick = ({target}, pictures) => {
     openPopup(popupElement);
 
     popupElement.querySelector('.big-picture__cancel').addEventListener('click', handleClosePopupClick);
-    document.addEventListener('keydown', handleClosePopupKeydown);
+    document.body.addEventListener('keydown', handleClosePopupKeydown);
   }
 };
 
