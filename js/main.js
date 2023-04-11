@@ -10,6 +10,6 @@ import { handleUploadFileChange } from './img-form.js';
 
 
 getData(errorLoadDataElement)
-  .then((pictures) => initTabs(pictures));
+  .then((pictures) => pictures && initTabs(pictures));
 
 document.querySelector('#upload-file').addEventListener('change', handleUploadFileChange);

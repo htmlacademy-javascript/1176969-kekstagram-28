@@ -12,19 +12,27 @@ const Method = {
   POST: 'POST',
 };
 
-const load = (messageError, route = Route.GET_DATA, method = Method.GET, body = null) => fetch(`${BASE_URL}${route}`, {method, body})
-  .then((response) => {
-    loadingElement.remove();
+const load = async (messageError, route = Route.GET_DATA, method = Method.GET, body = null) => {
+  try {
+    const response = await fetch(`${BASE_URL}${route}`, {method, body});
     if (response.ok) {
-      if (!/data/.test(response.url)) {
-        successElement.render();
+      loadingElement.remove();
+      if (response.ok) {
+        if (!/data/.test(response.url)) {
+          successElement.render();
+        }
+        return response.json();
       }
-      return response.json();
+      messageError.render();
+    } else if (!response.ok) {
+      loadingElement.remove();
+      messageError.render();
     }
-
+  } catch (e) {
+    loadingElement.remove();
     messageError.render();
-  })
-  .catch(messageError.render);
+  }
+};
 
 const getData = (messageError) => load(messageError);
 
