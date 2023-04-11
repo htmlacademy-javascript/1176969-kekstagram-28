@@ -165,7 +165,10 @@ function handleClosePopupClick () {
 
 function handleClosePopupKeydown ({key}) {
   const activeElementAttribute = document.activeElement?.getAttribute('name');
-  if (key === 'Escape' && activeElementAttribute !== 'hashtags' && activeElementAttribute !== 'description') {
+  if (key === 'Escape'
+      && activeElementAttribute !== 'hashtags'
+      && activeElementAttribute !== 'description'
+      && !document.querySelector('.error')) {
     closePopup();
   }
 }
@@ -318,5 +321,5 @@ export function handleUploadFileChange ({target}) {
   orderForm.addEventListener('submit', (evt) => handleFormSubmit(evt, pristine.validate));
 
   uploadPopupElement.querySelector('#upload-cancel').addEventListener('click', handleClosePopupClick);
-  document.addEventListener('keydown', handleClosePopupKeydown);
+  document.body.addEventListener('keydown', handleClosePopupKeydown);
 }

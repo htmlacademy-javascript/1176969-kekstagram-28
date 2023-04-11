@@ -50,11 +50,23 @@ export const successElement = {
 export const errorFormDataElement = {
   mainElement: document.querySelector('main'),
   element: document.querySelector('#error').content.querySelector('.error').cloneNode(true),
+  handleEscKeydown({key}) {
+    if (key === 'Escape') {
+      errorFormDataElement.remove();
+    }
+  },
   render() {
     this.element.onclick = () => this.remove();
+    this.element.addEventListener('click', ({target}) => {
+      if (!target.closest('.error__inner')) {
+        this.remove();
+      }
+    });
+    document.body.addEventListener('keydown', this.handleEscKeydown);
     this.mainElement.appendChild(this.element);
   },
   remove() {
-    this.element.remove();
+    document.body.removeEventListener('keydown', this.handleEscKeydown);
+    errorFormDataElement.element.remove();
   },
 };
