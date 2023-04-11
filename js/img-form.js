@@ -1,10 +1,13 @@
 import { sendData } from './api.js';
 import { errorFormDataElement, loadingElement } from './alerts.js';
 
-const defaultScale = 100;
-const maxScale = 100;
-const minScale = 25;
-let scaleValue = defaultScale;
+const MAX_HASHTAG_LENGTH = 20;
+const MAX_HASHTAGS_COUNT = 5;
+const MAX_DESCRIPTION_LENGTH = 140;
+const MAX_SCALE = 100;
+const MIN_SCALE = 25;
+const DEFAULT_SCALE = 100;
+let scaleValue = DEFAULT_SCALE;
 
 const effectSchema = {
   'chrome': 'grayscale',
@@ -109,7 +112,7 @@ const resetForm = () => {
   const sliderElement = document.querySelector('.effect-level__slider');
   sliderElement.noUiSlider.destroy();
 
-  scaleValue = defaultScale;
+  scaleValue = DEFAULT_SCALE;
   resetImgElement();
   clearEffectState();
   resetUploadForm();
@@ -173,12 +176,12 @@ function handleScaleClick ({target}) {
   const decrementScaleElement = target.closest('.scale__control--smaller');
   const imgPreviewElement = target.closest('.img-upload__preview-container').querySelector('.img-upload__preview img');
 
-  if (incrementScaleElement && scaleValue < maxScale) {
-    scaleValue += minScale;
+  if (incrementScaleElement && scaleValue < MAX_SCALE) {
+    scaleValue += MIN_SCALE;
   }
 
-  if (decrementScaleElement && scaleValue > minScale) {
-    scaleValue -= minScale;
+  if (decrementScaleElement && scaleValue > MIN_SCALE) {
+    scaleValue -= MIN_SCALE;
   }
 
   scaleValueElement.value = `${(scaleValue)}%`;
@@ -251,13 +254,13 @@ function handleHashtagValidate (value) {
       return false;
     }
 
-    if (hashtag.length > 20) {
+    if (hashtag.length > MAX_HASHTAG_LENGTH) {
       setHastagsErrorMessage('Максимальная длина хэш-тега 20 символов');
       return false;
     }
   }
 
-  if (hashtags.length > 5) {
+  if (hashtags.length > MAX_HASHTAGS_COUNT) {
     setHastagsErrorMessage('Не больше 5 хеш-тегов');
     return false;
   }
@@ -266,7 +269,7 @@ function handleHashtagValidate (value) {
 }
 
 function handleDescriptionValidate (value) {
-  return value.length <= 140;
+  return value.length <= MAX_DESCRIPTION_LENGTH;
 }
 
 function handleFormSubmit (evt, validate) {
@@ -317,5 +320,3 @@ export function handleUploadFileChange ({target}) {
   uploadPopupElement.querySelector('#upload-cancel').addEventListener('click', handleClosePopupClick);
   document.addEventListener('keydown', handleClosePopupKeydown);
 }
-
-document.querySelector('#upload-file').addEventListener('change', handleUploadFileChange);
