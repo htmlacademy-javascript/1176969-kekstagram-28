@@ -1,6 +1,6 @@
 import { MAX_COMMENTS } from './const.js';
 
-const commentTeplate = ({id, avatar, name, message}) => (`<li class="social__comment" data-comment-id="${id}">
+const commentTepmlate = ({id, avatar, name, message}) => (`<li class="social__comment" data-comment-id="${id}">
   <img
     class="social__picture"
     src="${avatar}"
@@ -36,7 +36,7 @@ const renderComments = (popupElement, {comments}) => {
 
   let index = 0;
   for (let i = index; i < MAX_COMMENTS && i < comments.length; i++) {
-    commentContainerElement.insertAdjacentHTML('beforeend', commentTeplate(comments[i]));
+    commentContainerElement.insertAdjacentHTML('beforeend', commentTepmlate(comments[i]));
     index += 1;
   }
   updateCommentsCount(index);
@@ -49,7 +49,7 @@ const renderComments = (popupElement, {comments}) => {
   loadMoreButton.classList.remove('hidden');
   loadMoreButton.addEventListener('click', () => {
     for (let i = index; i < index + MAX_COMMENTS && i < comments.length; i++) {
-      commentContainerElement.insertAdjacentHTML('beforeend', commentTeplate(comments[i]));
+      commentContainerElement.insertAdjacentHTML('beforeend', commentTepmlate(comments[i]));
     }
     index += index + MAX_COMMENTS >= comments.length ? comments.length - index : MAX_COMMENTS;
     updateCommentsCount(index);

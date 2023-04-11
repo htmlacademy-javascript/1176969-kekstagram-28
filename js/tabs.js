@@ -1,7 +1,7 @@
 import { renderPictures } from './pictures.js';
 import { debounce } from './utils.js';
 
-const filterShema = {
+const filterSchema = {
   'По умолчанию': 'default',
   'Случайные': 'random',
   'Обсуждаемые': 'pop',
@@ -42,7 +42,7 @@ function handleTabsClick ({target}, pictures) {
     return;
   }
 
-  const filter = filterShema[tabButtonElement.textContent];
+  const filter = filterSchema[tabButtonElement.textContent];
   const filterPictures = getFilterPictures(filter, pictures);
   updateActiveTabClass(tabsMenuElement, tabButtonElement);
   removePictures();
