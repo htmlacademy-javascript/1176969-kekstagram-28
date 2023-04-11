@@ -55,7 +55,6 @@ const createSliderElement = (sliderElement) => {
       },
     },
   });
-  sliderElement.setAttribute('disabled', true);
   sliderElement.noUiSlider.on('update', () => {
     const effect = document.querySelector('.effects__item .effects__radio:checked')?.id?.split('-')?.[1] ?? '';
     const imgPreviewElement = document.querySelector('.img-upload__wrapper .img-upload__preview img');
@@ -159,6 +158,14 @@ const createValidator = (orderForm) => {
 
 const validImgType = (file) => fileTypes.includes(file?.type);
 
+const displaySliderElement = (sliderElement, isVisible) => {
+  if (isVisible) {
+    sliderElement.closest('.effect-level').classList.remove('hidden');
+  } else if (!isVisible) {
+    sliderElement.closest('.effect-level').classList.add('hidden');
+  }
+};
+
 function handleClosePopupClick () {
   closePopup();
 }
@@ -203,28 +210,28 @@ function handleImgEffectChange ({target}, sliderElement) {
 
   switch (effect) {
     case 'none':
-      sliderElement.setAttribute('disabled', true);
+      displaySliderElement(sliderElement, false);
       changeEffect(sliderElement, 0, 100, 10);
       imgPreviewElement.style.filter = 'none';
       imgPreviewElement.className = '';
       break;
     case 'marvin':
-      sliderElement.removeAttribute('disabled');
+      displaySliderElement(sliderElement, true);
       changeEffect(sliderElement, 0, 100, 1, effect);
       imgPreviewElement.style.filter = `${effectSchema[effect]}(${effectState[effect]}%)`;
       break;
     case 'phobos':
-      sliderElement.removeAttribute('disabled');
+      displaySliderElement(sliderElement, true);
       changeEffect(sliderElement, 0, 300, 10, effect);
       imgPreviewElement.style.filter = `${effectSchema[effect]}(${effectState[effect] / 100}px)`;
       break;
     case 'heat':
-      sliderElement.removeAttribute('disabled');
+      displaySliderElement(sliderElement, true);
       changeEffect(sliderElement, 100, 300, 10, effect);
       imgPreviewElement.style.filter = `${effectSchema[effect]}(${effectState[effect] / 100})`;
       break;
     default:
-      sliderElement.removeAttribute('disabled');
+      displaySliderElement(sliderElement, true);
       changeEffect(sliderElement, 0, 100, 10, effect);
       imgPreviewElement.style.filter = `${effectSchema[effect]}(${effectState[effect] / 100})`;
   }
@@ -311,6 +318,7 @@ export function handleUploadFileChange ({target}) {
 
   const effectsElement = document.querySelector('.effects__list');
   effectsElement.addEventListener('change', (evt) => handleImgEffectChange(evt, sliderElement));
+  displaySliderElement(sliderElement, false);
 
   const orderForm = document.querySelector('.img-upload__form');
   const pristine = createValidator(orderForm);
