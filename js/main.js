@@ -1,6 +1,5 @@
 import './utils.js';
 import './api.js';
-import './functions.js';
 import './pictures.js';
 import './img-form.js';
 import { getData } from './api.js';
