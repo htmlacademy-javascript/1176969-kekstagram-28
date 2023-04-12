@@ -1,7 +1,4 @@
-
-import { handlePictureClick } from './img-popup.js';
-
-export const renderPictures = (pictures) => {
+export const renderPictures = (pictures, handlePicturesClick) => {
   const pictureTemplate = document.querySelector('#picture').content.querySelector('.picture');
   const picturesFragment = new DocumentFragment();
 
@@ -22,5 +19,5 @@ export const renderPictures = (pictures) => {
 
   const picturesElement = document.querySelector('.pictures');
   picturesElement.appendChild(picturesFragment);
-  picturesElement.addEventListener('click', ((evt) => handlePictureClick(evt, pictures)));
+  picturesElement.addEventListener('click', handlePicturesClick);
 };

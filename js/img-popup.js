@@ -84,7 +84,7 @@ function handleClosePopupKeydown ({key}) {
   }
 }
 
-export const handlePictureClick = ({target}, pictures) => {
+export function handlePictureClick ({target}, pictures) {
   if (target?.closest('.picture')) {
     const picture = pictures.find((item) => item.id === Number(target.closest('.picture').dataset.pictureId));
     const popupElement = document.querySelector('.big-picture');
@@ -97,6 +97,4 @@ export const handlePictureClick = ({target}, pictures) => {
     popupElement.querySelector('.big-picture__cancel').addEventListener('click', handleClosePopupClick);
     document.body.addEventListener('keydown', handleClosePopupKeydown);
   }
-};
-
-
+}

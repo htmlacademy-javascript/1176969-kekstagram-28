@@ -25,6 +25,9 @@ const fileTypes = [
 
 const effectState = {};
 
+
+const orderForm = document.querySelector('.img-upload__form');
+
 const openPopup = (uploadPopupElement) => {
   uploadPopupElement.classList.remove('hidden');
   document.body.classList.add('modal-open');
@@ -123,6 +126,7 @@ const closePopup = () => {
   document.removeEventListener('keydown', handleClosePopupKeydown);
   uploadPopupElement.querySelector('#upload-cancel').removeEventListener('click', handleClosePopupClick);
   document.body.classList.remove('modal-open');
+  orderForm.removeEventListener('submit', handleFormSubmit);
   resetForm();
 };
 
@@ -132,7 +136,7 @@ const setHastagsErrorMessage = (message) => {
 };
 const getHastagsErrorMessage = () => formErrorMessage.hastag;
 
-const createValidator = (orderForm) => {
+const createValidator = () => {
   const pristine = new Pristine(orderForm, {
     classTo: 'img-upload__field-wrapper',
     errorClass: 'img-upload__field-wrapper--invalid',
@@ -155,6 +159,8 @@ const createValidator = (orderForm) => {
 
   return pristine;
 };
+
+const pristineValidator = createValidator(orderForm);
 
 const validImgType = (file) => fileTypes.includes(file?.type);
 
@@ -282,9 +288,9 @@ function handleDescriptionValidate (value) {
   return value.length <= MAX_DESCRIPTION_LENGTH;
 }
 
-function handleFormSubmit (evt, validate) {
+function handleFormSubmit (evt) {
   evt.preventDefault();
-  if (validate()) {
+  if (pristineValidator.validate()) {
     loadingElement.render();
     sendData(errorFormDataElement, new FormData(evt.target))
       .then((response) => {
@@ -320,13 +326,10 @@ export function handleUploadFileChange ({target}) {
   effectsElement.addEventListener('change', (evt) => handleImgEffectChange(evt, sliderElement));
   displaySliderElement(sliderElement, false);
 
-  const orderForm = document.querySelector('.img-upload__form');
-  const pristine = createValidator(orderForm);
+  orderForm.querySelector('.text__hashtags').addEventListener('change', pristineValidator.validate);
+  orderForm.querySelector('.text__description').addEventListener('change', pristineValidator.validate);
 
-  orderForm.querySelector('.text__hashtags').addEventListener('change', pristine.validate);
-  orderForm.querySelector('.text__description').addEventListener('change', pristine.validate);
-
-  orderForm.addEventListener('submit', (evt) => handleFormSubmit(evt, pristine.validate));
+  orderForm.addEventListener('submit', handleFormSubmit);
 
   uploadPopupElement.querySelector('#upload-cancel').addEventListener('click', handleClosePopupClick);
   document.body.addEventListener('keydown', handleClosePopupKeydown);
