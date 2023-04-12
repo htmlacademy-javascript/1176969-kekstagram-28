@@ -9,7 +9,17 @@ const MIN_SCALE = 25;
 const DEFAULT_SCALE = 100;
 let scaleValue = DEFAULT_SCALE;
 
+const uploadImgElement = document.querySelector('.img-upload__overlay img');
+const uploadPopupElement = document.querySelector('.img-upload__overlay');
+const scaleValueElement = document.querySelector('.scale__control--value');
+const sliderElement = document.querySelector('.effect-level__slider');
+const effectsElement = document.querySelector('.effects__list');
+const imgPreviewElement = document.querySelector('.img-upload__wrapper .img-upload__preview img');
+const orderForm = document.querySelector('.img-upload__form');
+
 const formErrorMessage = {};
+const effectState = {};
+
 const effectSchema = {
   'chrome': 'grayscale',
   'sepia': 'sepia',
@@ -24,12 +34,8 @@ const fileTypes = [
   'image/png',
 ];
 
-const effectState = {};
 
-
-const orderForm = document.querySelector('.img-upload__form');
-
-const openPopup = (uploadPopupElement) => {
+const openPopup = () => {
   uploadPopupElement.classList.remove('hidden');
   document.body.classList.add('modal-open');
 };
@@ -41,7 +47,7 @@ const updateEffectLevelValue = (effect) => {
   }
 };
 
-const createSliderElement = (sliderElement) => {
+const createSliderElement = () => {
   noUiSlider.create(sliderElement, {
     range: {
       min: 0,
@@ -61,7 +67,6 @@ const createSliderElement = (sliderElement) => {
   });
   sliderElement.noUiSlider.on('update', () => {
     const effect = document.querySelector('.effects__item .effects__radio:checked')?.id?.split('-')?.[1] ?? '';
-    const imgPreviewElement = document.querySelector('.img-upload__wrapper .img-upload__preview img');
     switch (effect) {
       case 'marvin':
         imgPreviewElement.style.filter = `${effectSchema[effect]}(${sliderElement.noUiSlider.get()}%)`;
@@ -83,7 +88,7 @@ const createSliderElement = (sliderElement) => {
   });
 };
 
-const changeEffect = (sliderElement, min, max, step, effect) => {
+const changeEffect = (min, max, step, effect) => {
   sliderElement.noUiSlider.updateOptions({
     range: {min, max},
     step
@@ -112,7 +117,6 @@ const resetImgElement = () => {
 };
 
 const resetForm = () => {
-  const sliderElement = document.querySelector('.effect-level__slider');
   sliderElement.noUiSlider.destroy();
 
   scaleValue = DEFAULT_SCALE;
@@ -122,7 +126,6 @@ const resetForm = () => {
 };
 
 const closePopup = () => {
-  const uploadPopupElement = document.querySelector('.img-upload__overlay');
   uploadPopupElement.classList.add('hidden');
   document.removeEventListener('keydown', onClosePopupKeydown);
   uploadPopupElement.querySelector('#upload-cancel').removeEventListener('click', onClosePopupClick);
@@ -164,7 +167,7 @@ const pristineValidator = createValidator(orderForm);
 
 const validImgType = (file) => fileTypes.includes(file?.type);
 
-const displaySliderElement = (sliderElement, isVisible) => {
+const displaySliderElement = (isVisible) => {
   if (isVisible) {
     sliderElement.closest('.effect-level').classList.remove('hidden');
   } else if (!isVisible) {
@@ -187,10 +190,8 @@ function onClosePopupKeydown ({key}) {
 }
 
 function onScaleClick ({target}) {
-  const scaleValueElement = target.closest('.scale').querySelector('.scale__control--value');
   const incrementScaleElement = target.closest('.scale__control--bigger');
   const decrementScaleElement = target.closest('.scale__control--smaller');
-  const imgPreviewElement = target.closest('.img-upload__preview-container').querySelector('.img-upload__preview img');
 
   if (incrementScaleElement && scaleValue < MAX_SCALE) {
     scaleValue += MIN_SCALE;
@@ -204,8 +205,7 @@ function onScaleClick ({target}) {
   imgPreviewElement.style.transform = `scale(${scaleValue / 100})`;
 }
 
-function onImgEffectChange ({target}, sliderElement) {
-  const imgPreviewElement = target.closest('.img-upload__wrapper').querySelector('.img-upload__preview img');
+function onImgEffectChange ({target}) {
   const effect = target.id.split('-')?.[1] ?? '';
 
   if (imgPreviewElement.className !== '') {
@@ -216,29 +216,29 @@ function onImgEffectChange ({target}, sliderElement) {
 
   switch (effect) {
     case 'none':
-      displaySliderElement(sliderElement, false);
-      changeEffect(sliderElement, 0, 100, 10);
+      displaySliderElement(false);
+      changeEffect(0, 100, 10);
       imgPreviewElement.style.filter = 'none';
       imgPreviewElement.className = '';
       break;
     case 'marvin':
-      displaySliderElement(sliderElement, true);
-      changeEffect(sliderElement, 0, 100, 1, effect);
+      displaySliderElement(true);
+      changeEffect(0, 100, 1, effect);
       imgPreviewElement.style.filter = `${effectSchema[effect]}(${effectState[effect]}%)`;
       break;
     case 'phobos':
-      displaySliderElement(sliderElement, true);
-      changeEffect(sliderElement, 0, 300, 10, effect);
+      displaySliderElement(true);
+      changeEffect(0, 300, 10, effect);
       imgPreviewElement.style.filter = `${effectSchema[effect]}(${effectState[effect] / 100}px)`;
       break;
     case 'heat':
-      displaySliderElement(sliderElement, true);
-      changeEffect(sliderElement, 100, 300, 10, effect);
+      displaySliderElement(true);
+      changeEffect(100, 300, 10, effect);
       imgPreviewElement.style.filter = `${effectSchema[effect]}(${effectState[effect] / 100})`;
       break;
     default:
-      displaySliderElement(sliderElement, true);
-      changeEffect(sliderElement, 0, 100, 10, effect);
+      displaySliderElement(true);
+      changeEffect(0, 100, 10, effect);
       imgPreviewElement.style.filter = `${effectSchema[effect]}(${effectState[effect] / 100})`;
   }
 }
@@ -309,28 +309,17 @@ export function onUploadFileChange ({target}) {
     return;
   }
 
-  const uploadImgElement = document.querySelector('.img-upload__overlay img');
   uploadImgElement.src = URL.createObjectURL(file);
-
-  const uploadPopupElement = document.querySelector('.img-upload__overlay');
-  openPopup(uploadPopupElement);
-
-  const scaleValueElement = document.querySelector('.scale__control--value');
+  openPopup();
   scaleValueElement.value = `${(scaleValue)}%`;
   uploadPopupElement.querySelector('.scale').addEventListener('click', onScaleClick);
-
-  const sliderElement = document.querySelector('.effect-level__slider');
-  createSliderElement(sliderElement);
-
-  const effectsElement = document.querySelector('.effects__list');
-  effectsElement.addEventListener('change', (evt) => onImgEffectChange(evt, sliderElement));
-  displaySliderElement(sliderElement, false);
+  createSliderElement();
+  effectsElement.addEventListener('change', onImgEffectChange);
+  displaySliderElement(false);
 
   orderForm.querySelector('.text__hashtags').addEventListener('change', pristineValidator.validate);
   orderForm.querySelector('.text__description').addEventListener('change', pristineValidator.validate);
-
   orderForm.addEventListener('submit', onFormSubmit);
-
   uploadPopupElement.querySelector('#upload-cancel').addEventListener('click', onClosePopupClick);
   document.body.addEventListener('keydown', onClosePopupKeydown);
 }

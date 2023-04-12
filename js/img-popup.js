@@ -1,5 +1,8 @@
 import { MAX_COMMENTS } from './const.js';
 
+const popupElement = document.querySelector('.big-picture');
+const commentContainerElement = popupElement.querySelector('.social__comments');
+
 const getCommentTepmlate = ({id, avatar, name, message}) => (`<li class="social__comment" data-comment-id="${id}">
   <img
     class="social__picture"
@@ -9,7 +12,7 @@ const getCommentTepmlate = ({id, avatar, name, message}) => (`<li class="social_
   <p class="social__text">${message}</p>
 </li>`);
 
-const updatePopup = (popupElement, {url, likes, comments, description} = {}) => {
+const updatePopup = ({url, likes, comments, description} = {}) => {
   popupElement.querySelector('.big-picture__img > img').src = url ?? '';
   popupElement.querySelector('.big-picture__img > img').alt = description ?? '';
   popupElement.querySelector('.likes-count').textContent = likes ?? '';
@@ -17,8 +20,7 @@ const updatePopup = (popupElement, {url, likes, comments, description} = {}) => 
   popupElement.querySelector('.social__caption').textContent = description ?? '';
 };
 
-const clearComments = (popupElement) => {
-  const commentContainerElement = popupElement.querySelector('.social__comments');
+const clearComments = () => {
   while (commentContainerElement.lastElementChild) {
     commentContainerElement.removeChild(commentContainerElement.lastElementChild);
   }
@@ -29,8 +31,7 @@ const updateCommentsCount = (count) => {
   countElement.textContent = count;
 };
 
-const renderComments = (popupElement, {comments}) => {
-  const commentContainerElement = popupElement.querySelector('.social__comments');
+const renderComments = ({comments}) => {
   const loadMoreButton = popupElement.querySelector('.comments-loader').cloneNode(true);
   popupElement.querySelector('.comments-loader').replaceWith(loadMoreButton);
 
@@ -60,18 +61,17 @@ const renderComments = (popupElement, {comments}) => {
   });
 };
 
-const openPopup = (popupElement) => {
+const openPopup = () => {
   popupElement.classList.remove('hidden');
   document.body.classList.add('modal-open');
 };
 
 const closePopup = () => {
-  const popupElement = document.querySelector('.big-picture');
   popupElement.classList.add('hidden');
   document.removeEventListener('keydown', onClosePopupKeydown);
   popupElement.querySelector('.big-picture__cancel').removeEventListener('click', onClosePopupClick);
   document.body.classList.remove('modal-open');
-  updatePopup(popupElement);
+  updatePopup();
 };
 
 function onClosePopupClick () {
@@ -87,12 +87,10 @@ function onClosePopupKeydown ({key}) {
 export function onPictureClick ({target}, pictures) {
   if (target?.closest('.picture')) {
     const picture = pictures.find((item) => item.id === Number(target.closest('.picture').dataset.pictureId));
-    const popupElement = document.querySelector('.big-picture');
-
-    updatePopup(popupElement, picture);
-    clearComments(popupElement);
-    renderComments(popupElement, picture);
-    openPopup(popupElement);
+    updatePopup(picture);
+    clearComments();
+    renderComments(picture);
+    openPopup();
 
     popupElement.querySelector('.big-picture__cancel').addEventListener('click', onClosePopupClick);
     document.body.addEventListener('keydown', onClosePopupKeydown);

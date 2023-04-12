@@ -2,13 +2,15 @@ import { onPictureClick } from './img-popup.js';
 import { renderPictures } from './pictures.js';
 import { debounce } from './utils.js';
 
+const tabsMenuElement = document.querySelector('.img-filters');
+
 const filterSchema = {
   'По умолчанию': 'default',
   'Случайные': 'random',
   'Обсуждаемые': 'pop',
 };
 
-const updateActiveTabClass = (tabsMenuElement, tabButtonElement) => {
+const updateActiveTabClass = (tabButtonElement) => {
   tabsMenuElement
     .querySelector('.img-filters__button.img-filters__button--active')
     .classList
@@ -36,7 +38,6 @@ const getFilterPictures = (filter, pictures) => {
 };
 
 function onTabsClick ({target}, pictures) {
-  const tabsMenuElement = target.closest('.img-filters');
   const tabButtonElement = target.closest('.img-filters__button:not(.img-filters__button--active)');
 
   if (!tabButtonElement) {
@@ -45,13 +46,12 @@ function onTabsClick ({target}, pictures) {
 
   const filter = filterSchema[tabButtonElement.textContent];
   const filterPictures = getFilterPictures(filter, pictures);
-  updateActiveTabClass(tabsMenuElement, tabButtonElement);
+  updateActiveTabClass(tabButtonElement);
   removePictures();
   renderPictures(filterPictures);
 }
 
 export const initTabs = (pictures) => {
-  const tabsMenuElement = document.querySelector('.img-filters');
   tabsMenuElement.classList.remove('img-filters--inactive');
   renderPictures(pictures, (evt) => onPictureClick(evt, pictures));
   tabsMenuElement.addEventListener('click', debounce((evt) => onTabsClick(evt, pictures)));
