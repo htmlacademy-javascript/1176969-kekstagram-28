@@ -123,10 +123,10 @@ const resetForm = () => {
 const closePopup = () => {
   const uploadPopupElement = document.querySelector('.img-upload__overlay');
   uploadPopupElement.classList.add('hidden');
-  document.removeEventListener('keydown', handleClosePopupKeydown);
-  uploadPopupElement.querySelector('#upload-cancel').removeEventListener('click', handleClosePopupClick);
+  document.removeEventListener('keydown', onClosePopupKeydown);
+  uploadPopupElement.querySelector('#upload-cancel').removeEventListener('click', onClosePopupClick);
   document.body.classList.remove('modal-open');
-  orderForm.removeEventListener('submit', handleFormSubmit);
+  orderForm.removeEventListener('submit', onFormSubmit);
   resetForm();
 };
 
@@ -147,13 +147,13 @@ const createValidator = () => {
 
   pristine.addValidator(
     orderForm.querySelector('.text__hashtags'),
-    handleHashtagValidate,
+    onHashtagValidate,
     getHastagsErrorMessage
   );
 
   pristine.addValidator(
     orderForm.querySelector('.text__description'),
-    handleDescriptionValidate,
+    onDescriptionValidate,
     'Комментарий длиннее 140 символов'
   );
 
@@ -172,11 +172,11 @@ const displaySliderElement = (sliderElement, isVisible) => {
   }
 };
 
-function handleClosePopupClick () {
+function onClosePopupClick () {
   closePopup();
 }
 
-function handleClosePopupKeydown ({key}) {
+function onClosePopupKeydown ({key}) {
   const activeElementAttribute = document.activeElement?.getAttribute('name');
   if (key === 'Escape'
       && activeElementAttribute !== 'hashtags'
@@ -186,7 +186,7 @@ function handleClosePopupKeydown ({key}) {
   }
 }
 
-function handleScaleClick ({target}) {
+function onScaleClick ({target}) {
   const scaleValueElement = target.closest('.scale').querySelector('.scale__control--value');
   const incrementScaleElement = target.closest('.scale__control--bigger');
   const decrementScaleElement = target.closest('.scale__control--smaller');
@@ -204,7 +204,7 @@ function handleScaleClick ({target}) {
   imgPreviewElement.style.transform = `scale(${scaleValue / 100})`;
 }
 
-function handleImgEffectChange ({target}, sliderElement) {
+function onImgEffectChange ({target}, sliderElement) {
   const imgPreviewElement = target.closest('.img-upload__wrapper').querySelector('.img-upload__preview img');
   const effect = target.id.split('-')?.[1] ?? '';
 
@@ -243,7 +243,7 @@ function handleImgEffectChange ({target}, sliderElement) {
   }
 }
 
-function handleHashtagValidate (value) {
+function onHashtagValidate (value) {
   if (value === '') {
     return true;
   }
@@ -284,11 +284,11 @@ function handleHashtagValidate (value) {
   return true;
 }
 
-function handleDescriptionValidate (value) {
+function onDescriptionValidate (value) {
   return value.length <= MAX_DESCRIPTION_LENGTH;
 }
 
-function handleFormSubmit (evt) {
+function onFormSubmit (evt) {
   evt.preventDefault();
   if (pristineValidator.validate()) {
     loadingElement.render();
@@ -301,7 +301,7 @@ function handleFormSubmit (evt) {
   }
 }
 
-export function handleUploadFileChange ({target}) {
+export function onUploadFileChange ({target}) {
   const file = target.files?.[0];
 
   if (!validImgType(file)) {
@@ -317,20 +317,20 @@ export function handleUploadFileChange ({target}) {
 
   const scaleValueElement = document.querySelector('.scale__control--value');
   scaleValueElement.value = `${(scaleValue)}%`;
-  uploadPopupElement.querySelector('.scale').addEventListener('click', handleScaleClick);
+  uploadPopupElement.querySelector('.scale').addEventListener('click', onScaleClick);
 
   const sliderElement = document.querySelector('.effect-level__slider');
   createSliderElement(sliderElement);
 
   const effectsElement = document.querySelector('.effects__list');
-  effectsElement.addEventListener('change', (evt) => handleImgEffectChange(evt, sliderElement));
+  effectsElement.addEventListener('change', (evt) => onImgEffectChange(evt, sliderElement));
   displaySliderElement(sliderElement, false);
 
   orderForm.querySelector('.text__hashtags').addEventListener('change', pristineValidator.validate);
   orderForm.querySelector('.text__description').addEventListener('change', pristineValidator.validate);
 
-  orderForm.addEventListener('submit', handleFormSubmit);
+  orderForm.addEventListener('submit', onFormSubmit);
 
-  uploadPopupElement.querySelector('#upload-cancel').addEventListener('click', handleClosePopupClick);
-  document.body.addEventListener('keydown', handleClosePopupKeydown);
+  uploadPopupElement.querySelector('#upload-cancel').addEventListener('click', onClosePopupClick);
+  document.body.addEventListener('keydown', onClosePopupKeydown);
 }

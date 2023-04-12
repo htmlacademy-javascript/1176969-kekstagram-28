@@ -1,4 +1,4 @@
-export const renderPictures = (pictures, handlePicturesClick) => {
+export const renderPictures = (pictures, onPicturesClick) => {
   const pictureTemplate = document.querySelector('#picture').content.querySelector('.picture');
   const picturesFragment = new DocumentFragment();
 
@@ -19,5 +19,5 @@ export const renderPictures = (pictures, handlePicturesClick) => {
 
   const picturesElement = document.querySelector('.pictures');
   picturesElement.appendChild(picturesFragment);
-  picturesElement.addEventListener('click', handlePicturesClick);
+  picturesElement.addEventListener('click', onPicturesClick);
 };

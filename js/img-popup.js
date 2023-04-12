@@ -68,23 +68,23 @@ const openPopup = (popupElement) => {
 const closePopup = () => {
   const popupElement = document.querySelector('.big-picture');
   popupElement.classList.add('hidden');
-  document.removeEventListener('keydown', handleClosePopupKeydown);
-  popupElement.querySelector('.big-picture__cancel').removeEventListener('click', handleClosePopupClick);
+  document.removeEventListener('keydown', onClosePopupKeydown);
+  popupElement.querySelector('.big-picture__cancel').removeEventListener('click', onClosePopupClick);
   document.body.classList.remove('modal-open');
   updatePopup(popupElement);
 };
 
-function handleClosePopupClick () {
+function onClosePopupClick () {
   closePopup();
 }
 
-function handleClosePopupKeydown ({key}) {
+function onClosePopupKeydown ({key}) {
   if (key === 'Escape') {
     closePopup();
   }
 }
 
-export function handlePictureClick ({target}, pictures) {
+export function onPictureClick ({target}, pictures) {
   if (target?.closest('.picture')) {
     const picture = pictures.find((item) => item.id === Number(target.closest('.picture').dataset.pictureId));
     const popupElement = document.querySelector('.big-picture');
@@ -94,7 +94,7 @@ export function handlePictureClick ({target}, pictures) {
     renderComments(popupElement, picture);
     openPopup(popupElement);
 
-    popupElement.querySelector('.big-picture__cancel').addEventListener('click', handleClosePopupClick);
-    document.body.addEventListener('keydown', handleClosePopupKeydown);
+    popupElement.querySelector('.big-picture__cancel').addEventListener('click', onClosePopupClick);
+    document.body.addEventListener('keydown', onClosePopupKeydown);
   }
 }

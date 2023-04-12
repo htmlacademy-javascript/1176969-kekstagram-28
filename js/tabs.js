@@ -1,4 +1,4 @@
-import { handlePictureClick } from './img-popup.js';
+import { onPictureClick } from './img-popup.js';
 import { renderPictures } from './pictures.js';
 import { debounce } from './utils.js';
 
@@ -35,7 +35,7 @@ const getFilterPictures = (filter, pictures) => {
   }
 };
 
-function handleTabsClick ({target}, pictures) {
+function onTabsClick ({target}, pictures) {
   const tabsMenuElement = target.closest('.img-filters');
   const tabButtonElement = target.closest('.img-filters__button:not(.img-filters__button--active)');
 
@@ -53,6 +53,6 @@ function handleTabsClick ({target}, pictures) {
 export const initTabs = (pictures) => {
   const tabsMenuElement = document.querySelector('.img-filters');
   tabsMenuElement.classList.remove('img-filters--inactive');
-  renderPictures(pictures, (evt) => handlePictureClick(evt, pictures));
-  tabsMenuElement.addEventListener('click', debounce((evt) => handleTabsClick(evt, pictures)));
+  renderPictures(pictures, (evt) => onPictureClick(evt, pictures));
+  tabsMenuElement.addEventListener('click', debounce((evt) => onTabsClick(evt, pictures)));
 };
