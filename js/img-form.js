@@ -154,7 +154,7 @@ const createValidator = () => {
   pristine.addValidator(
     orderForm.querySelector('.text__description'),
     onDescriptionValidate,
-    'Комментарий длиннее 140 символов'
+    `Комментарий длиннее ${MAX_DESCRIPTION_LENGTH} символов`
   );
 
   return pristine;
@@ -271,13 +271,13 @@ function onHashtagValidate (value) {
     }
 
     if (hashtag.length > MAX_HASHTAG_LENGTH) {
-      setHastagsErrorMessage('Максимальная длина хэш-тега 20 символов');
+      setHastagsErrorMessage(`Максимальная длина хэш-тега ${MAX_HASHTAG_LENGTH} символов`);
       return false;
     }
   }
 
   if (hashtags.length > MAX_HASHTAGS_COUNT) {
-    setHastagsErrorMessage('Не больше 5 хеш-тегов');
+    setHastagsErrorMessage(`Не больше ${MAX_HASHTAGS_COUNT} хеш-тегов`);
     return false;
   }
   setHastagsErrorMessage('');
