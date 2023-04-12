@@ -3,15 +3,6 @@ import { MAX_COMMENTS } from './const.js';
 const popupElement = document.querySelector('.big-picture');
 const commentContainerElement = popupElement.querySelector('.social__comments');
 
-const getCommentTepmlate = ({id, avatar, name, message}) => (`<li class="social__comment" data-comment-id="${id}">
-  <img
-    class="social__picture"
-    src="${avatar}"
-    alt="${name}"
-    width="35" height="35">
-  <p class="social__text">${message}</p>
-</li>`);
-
 const updatePopup = ({url, likes, comments, description} = {}) => {
   popupElement.querySelector('.big-picture__img > img').src = url ?? '';
   popupElement.querySelector('.big-picture__img > img').alt = description ?? '';
@@ -31,13 +22,35 @@ const updateCommentsCount = (count) => {
   countElement.textContent = count;
 };
 
+const getCommentElement = ({id, avatar, name, message}) => {
+  const avatarSize = '35';
+  const commentWrapperElement = document.createElement('li');
+  const commentAvatarElement = document.createElement('img');
+  const commentDescriptionElement = document.createElement('p');
+
+  commentWrapperElement.className = 'social__comment';
+  commentWrapperElement.dataset.commentId = id;
+  commentAvatarElement.className = 'social__picture';
+  commentAvatarElement.src = avatar;
+  commentAvatarElement.alt = name;
+  commentAvatarElement.width = avatarSize;
+  commentAvatarElement.height = avatarSize;
+  commentDescriptionElement.className = 'social__text';
+  commentDescriptionElement.textContent = message;
+
+  commentWrapperElement.appendChild(commentAvatarElement);
+  commentWrapperElement.appendChild(commentDescriptionElement);
+
+  return commentWrapperElement;
+};
+
 const renderComments = ({comments}) => {
   const loadMoreButton = popupElement.querySelector('.comments-loader').cloneNode(true);
   popupElement.querySelector('.comments-loader').replaceWith(loadMoreButton);
 
   let index = 0;
   for (let i = index; i < MAX_COMMENTS && i < comments.length; i++) {
-    commentContainerElement.insertAdjacentHTML('beforeend', getCommentTepmlate(comments[i]));
+    commentContainerElement.appendChild(getCommentElement(comments[i]));
     index += 1;
   }
   updateCommentsCount(index);
@@ -50,7 +63,7 @@ const renderComments = ({comments}) => {
   loadMoreButton.classList.remove('hidden');
   loadMoreButton.addEventListener('click', () => {
     for (let i = index; i < index + MAX_COMMENTS && i < comments.length; i++) {
-      commentContainerElement.insertAdjacentHTML('beforeend', getCommentTepmlate(comments[i]));
+      commentContainerElement.appendChild(getCommentElement(comments[i]));
     }
     index += index + MAX_COMMENTS >= comments.length ? comments.length - index : MAX_COMMENTS;
     updateCommentsCount(index);
@@ -87,6 +100,7 @@ function onClosePopupKeydown ({key}) {
 export function onPictureClick ({target}, pictures) {
   if (target?.closest('.picture')) {
     const picture = pictures.find((item) => item.id === Number(target.closest('.picture').dataset.pictureId));
+
     updatePopup(picture);
     clearComments();
     renderComments(picture);
