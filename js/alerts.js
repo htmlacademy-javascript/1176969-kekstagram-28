@@ -26,7 +26,7 @@ export const loadingElement = {
 export const successElement = {
   mainElement: document.querySelector('main'),
   element: document.querySelector('#success').content.querySelector('.success').cloneNode(true),
-  handleEscKeydown({key}) {
+  onEscKeydown({key}) {
     if (key === 'Escape') {
       successElement.remove();
     }
@@ -38,11 +38,11 @@ export const successElement = {
         this.remove();
       }
     });
-    document.body.addEventListener('keydown', this.handleEscKeydown);
+    document.body.addEventListener('keydown', this.onEscKeydown);
     this.mainElement.appendChild(this.element);
   },
   remove() {
-    document.body.removeEventListener('keydown', this.handleEscKeydown);
+    document.body.removeEventListener('keydown', this.onEscKeydown);
     successElement.element.remove();
   },
 };
@@ -50,7 +50,7 @@ export const successElement = {
 export const errorFormDataElement = {
   mainElement: document.querySelector('main'),
   element: document.querySelector('#error').content.querySelector('.error').cloneNode(true),
-  handleEscKeydown({key}) {
+  onEscKeydown({key}) {
     if (key === 'Escape') {
       errorFormDataElement.remove();
     }
@@ -62,11 +62,11 @@ export const errorFormDataElement = {
         this.remove();
       }
     });
-    document.body.addEventListener('keydown', this.handleEscKeydown);
+    document.body.addEventListener('keydown', this.onEscKeydown);
     this.mainElement.appendChild(this.element);
   },
   remove() {
-    document.body.removeEventListener('keydown', this.handleEscKeydown);
+    document.body.removeEventListener('keydown', this.onEscKeydown);
     errorFormDataElement.element.remove();
   },
 };

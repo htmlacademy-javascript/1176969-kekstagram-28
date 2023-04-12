@@ -1,6 +1,9 @@
 import { MAX_COMMENTS } from './const.js';
 
-const commentTepmlate = ({id, avatar, name, message}) => (`<li class="social__comment" data-comment-id="${id}">
+const popupElement = document.querySelector('.big-picture');
+const commentContainerElement = popupElement.querySelector('.social__comments');
+
+const getCommentTepmlate = ({id, avatar, name, message}) => (`<li class="social__comment" data-comment-id="${id}">
   <img
     class="social__picture"
     src="${avatar}"
@@ -9,7 +12,7 @@ const commentTepmlate = ({id, avatar, name, message}) => (`<li class="social__co
   <p class="social__text">${message}</p>
 </li>`);
 
-const updatePopup = (popupElement, {url, likes, comments, description} = {}) => {
+const updatePopup = ({url, likes, comments, description} = {}) => {
   popupElement.querySelector('.big-picture__img > img').src = url ?? '';
   popupElement.querySelector('.big-picture__img > img').alt = description ?? '';
   popupElement.querySelector('.likes-count').textContent = likes ?? '';
@@ -17,8 +20,7 @@ const updatePopup = (popupElement, {url, likes, comments, description} = {}) => 
   popupElement.querySelector('.social__caption').textContent = description ?? '';
 };
 
-const clearComments = (popupElement) => {
-  const commentContainerElement = popupElement.querySelector('.social__comments');
+const clearComments = () => {
   while (commentContainerElement.lastElementChild) {
     commentContainerElement.removeChild(commentContainerElement.lastElementChild);
   }
@@ -29,14 +31,13 @@ const updateCommentsCount = (count) => {
   countElement.textContent = count;
 };
 
-const renderComments = (popupElement, {comments}) => {
-  const commentContainerElement = popupElement.querySelector('.social__comments');
+const renderComments = ({comments}) => {
   const loadMoreButton = popupElement.querySelector('.comments-loader').cloneNode(true);
   popupElement.querySelector('.comments-loader').replaceWith(loadMoreButton);
 
   let index = 0;
   for (let i = index; i < MAX_COMMENTS && i < comments.length; i++) {
-    commentContainerElement.insertAdjacentHTML('beforeend', commentTepmlate(comments[i]));
+    commentContainerElement.insertAdjacentHTML('beforeend', getCommentTepmlate(comments[i]));
     index += 1;
   }
   updateCommentsCount(index);
@@ -49,7 +50,7 @@ const renderComments = (popupElement, {comments}) => {
   loadMoreButton.classList.remove('hidden');
   loadMoreButton.addEventListener('click', () => {
     for (let i = index; i < index + MAX_COMMENTS && i < comments.length; i++) {
-      commentContainerElement.insertAdjacentHTML('beforeend', commentTepmlate(comments[i]));
+      commentContainerElement.insertAdjacentHTML('beforeend', getCommentTepmlate(comments[i]));
     }
     index += index + MAX_COMMENTS >= comments.length ? comments.length - index : MAX_COMMENTS;
     updateCommentsCount(index);
@@ -60,43 +61,38 @@ const renderComments = (popupElement, {comments}) => {
   });
 };
 
-const openPopup = (popupElement) => {
+const openPopup = () => {
   popupElement.classList.remove('hidden');
   document.body.classList.add('modal-open');
 };
 
 const closePopup = () => {
-  const popupElement = document.querySelector('.big-picture');
   popupElement.classList.add('hidden');
-  document.removeEventListener('keydown', handleClosePopupKeydown);
-  popupElement.querySelector('.big-picture__cancel').removeEventListener('click', handleClosePopupClick);
+  document.removeEventListener('keydown', onClosePopupKeydown);
+  popupElement.querySelector('.big-picture__cancel').removeEventListener('click', onClosePopupClick);
   document.body.classList.remove('modal-open');
-  updatePopup(popupElement);
+  updatePopup();
 };
 
-function handleClosePopupClick () {
+function onClosePopupClick () {
   closePopup();
 }
 
-function handleClosePopupKeydown ({key}) {
+function onClosePopupKeydown ({key}) {
   if (key === 'Escape') {
     closePopup();
   }
 }
 
-export const handlePictureClick = ({target}, pictures) => {
+export function onPictureClick ({target}, pictures) {
   if (target?.closest('.picture')) {
     const picture = pictures.find((item) => item.id === Number(target.closest('.picture').dataset.pictureId));
-    const popupElement = document.querySelector('.big-picture');
+    updatePopup(picture);
+    clearComments();
+    renderComments(picture);
+    openPopup();
 
-    updatePopup(popupElement, picture);
-    clearComments(popupElement);
-    renderComments(popupElement, picture);
-    openPopup(popupElement);
-
-    popupElement.querySelector('.big-picture__cancel').addEventListener('click', handleClosePopupClick);
-    document.body.addEventListener('keydown', handleClosePopupKeydown);
+    popupElement.querySelector('.big-picture__cancel').addEventListener('click', onClosePopupClick);
+    document.body.addEventListener('keydown', onClosePopupKeydown);
   }
-};
-
-
+}

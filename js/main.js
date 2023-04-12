@@ -5,10 +5,10 @@ import './img-form.js';
 import { getData } from './api.js';
 import { errorLoadDataElement } from './alerts.js';
 import { initTabs } from './tabs.js';
-import { handleUploadFileChange } from './img-form.js';
+import { onUploadFileChange } from './img-form.js';
 
 
 getData(errorLoadDataElement)
   .then((pictures) => pictures && initTabs(pictures));
 
-document.querySelector('#upload-file').addEventListener('change', handleUploadFileChange);
+document.querySelector('#upload-file').addEventListener('change', onUploadFileChange);
