@@ -9,6 +9,7 @@ const MIN_SCALE = 25;
 const DEFAULT_SCALE = 100;
 let scaleValue = DEFAULT_SCALE;
 
+const formErrorMessage = {};
 const effectSchema = {
   'chrome': 'grayscale',
   'sepia': 'sepia',
@@ -130,7 +131,6 @@ const closePopup = () => {
   resetForm();
 };
 
-const formErrorMessage = {};
 const setHastagsErrorMessage = (message) => {
   formErrorMessage['hastag'] = message;
 };
