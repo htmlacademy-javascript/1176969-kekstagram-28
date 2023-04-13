@@ -193,13 +193,8 @@ function onScaleClick ({target}) {
   const incrementScaleElement = target.closest('.scale__control--bigger');
   const decrementScaleElement = target.closest('.scale__control--smaller');
 
-  if (incrementScaleElement && scaleValue < MAX_SCALE) {
-    scaleValue += MIN_SCALE;
-  }
-
-  if (decrementScaleElement && scaleValue > MIN_SCALE) {
-    scaleValue -= MIN_SCALE;
-  }
+  scaleValue = incrementScaleElement && scaleValue < MAX_SCALE ? scaleValue + MIN_SCALE : scaleValue;
+  scaleValue = decrementScaleElement && scaleValue > MIN_SCALE ? scaleValue - MIN_SCALE : scaleValue;
 
   scaleValueElement.value = `${(scaleValue)}%`;
   imgPreviewElement.style.transform = `scale(${scaleValue / 100})`;

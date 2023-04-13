@@ -48,11 +48,13 @@ const renderComments = ({comments}) => {
   const loadMoreButton = popupElement.querySelector('.comments-loader').cloneNode(true);
   popupElement.querySelector('.comments-loader').replaceWith(loadMoreButton);
 
+  const commentFragment = new DocumentFragment();
   let index = 0;
   for (let i = index; i < MAX_COMMENTS && i < comments.length; i++) {
-    commentContainerElement.appendChild(getCommentElement(comments[i]));
+    commentFragment.appendChild(getCommentElement(comments[i]));
     index += 1;
   }
+  commentContainerElement.appendChild(commentFragment);
   updateCommentsCount(index);
 
   if (MAX_COMMENTS >= comments.length) {
@@ -63,9 +65,10 @@ const renderComments = ({comments}) => {
   loadMoreButton.classList.remove('hidden');
   loadMoreButton.addEventListener('click', () => {
     for (let i = index; i < index + MAX_COMMENTS && i < comments.length; i++) {
-      commentContainerElement.appendChild(getCommentElement(comments[i]));
+      commentFragment.appendChild(getCommentElement(comments[i]));
     }
     index += index + MAX_COMMENTS >= comments.length ? comments.length - index : MAX_COMMENTS;
+    commentContainerElement.appendChild(commentFragment);
     updateCommentsCount(index);
 
     if (index >= comments.length) {
